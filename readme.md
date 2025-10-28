@@ -1,7 +1,7 @@
 # Laboratorio Android. Cliente de GitHub
 
 ## Datos del estudinte
-**Nombre:** Gandy Napoleon Tercero
+**Nombre:** Alan Diaz
 **Carrera:** Ingenieria Informatica
 
 ## Descripción del Proyecto
