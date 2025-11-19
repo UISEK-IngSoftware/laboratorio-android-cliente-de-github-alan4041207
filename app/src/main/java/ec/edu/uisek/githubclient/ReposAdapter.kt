@@ -1,35 +1,55 @@
 package ec.edu.uisek.githubclient
 
-import android.content.ClipData
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import ec.edu.uisek.githubclient.databinding.FragmentRepoltemBinding
+import com.bumptech.glide.Glide
+import ec.edu.uisek.githubclient.databinding.FragmentRepoItemBinding
+import ec.edu.uisek.githubclient.models.Repo
 
-
-class ReposViewHolder (private val binding: FragmentRepoltemBinding) :
+class ReposViewHolder(private val binding: FragmentRepoItemBinding) :
     RecyclerView.ViewHolder(binding.root) {
-    fun bind(position : Int){
-        binding.repoName.text = "Repositorio No. ${position}"
-        binding.repoDescription.text = "Esta es la  descripcion para el elemento No. ${position}"
+    fun bind(
+        repo: Repo,
+        onEditClick: (Repo) -> Unit,
+        onDeleteClick: (Repo) -> Unit
+    ) {
+        binding.repoName.text = repo.name
+        binding.repoDescription.text = repo.description
+        binding.repoLang.text = repo.language
+        Glide.with(binding.root.context)
+            .load(repo.owner.avatarUrl)
+            .placeholder(R.mipmap.ic_launcher)
+            .error(R.mipmap.ic_launcher)
+            .circleCrop()
+            .into(binding.reportOwnerImage)
 
+        binding.editButton.setOnClickListener { onEditClick(repo) }
+        binding.deleteButton.setOnClickListener { onDeleteClick(repo) }
     }
 }
-class ReposAdapter : RecyclerView.Adapter<ReposViewHolder>(){
 
-    override fun getItemCount(): Int = 3
-
+class ReposAdapter(
+    private val onEditClick: (Repo) -> Unit,
+    private val onDeleteClick: (Repo) -> Unit
+) : RecyclerView.Adapter<ReposViewHolder>() {
+    private var repositorios: List<Repo> = emptyList()
+    override fun getItemCount(): Int = repositorios.size
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ReposViewHolder {
-        var binding = FragmentRepoltemBinding.inflate(
+        val binding = FragmentRepoItemBinding.inflate(
             LayoutInflater.from(parent.context),
             parent,
             false
         )
         return ReposViewHolder(binding)
-
     }
 
     override fun onBindViewHolder(holder: ReposViewHolder, position: Int) {
-        holder.bind(position)
+        holder.bind(repositorios[position], onEditClick, onDeleteClick)
+    }
+
+    fun updateRepositorios(newRepositorios: List<Repo>) {
+        repositorios = newRepositorios
+        notifyDataSetChanged()
     }
 }
